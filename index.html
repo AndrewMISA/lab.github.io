@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Black & White Calculator</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #000;
+            color: #fff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .calculator {
+            width: 300px;
+            background-color: #111;
+            border: 2px solid #fff;
+            border-radius: 10px;
+            box-shadow: 0 4px 10px rgba(255, 255, 255, 0.2);
+            overflow: hidden;
+        }
+
+        .display {
+            width: 100%;
+            height: 60px;
+            background-color: #000;
+            color: #fff;
+            font-size: 24px;
+            text-align: right;
+            padding: 10px;
+            box-sizing: border-box;
+            border: none;
+            outline: none;
+        }
+
+        .buttons {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background-color: #000;
+        }
+
+        .button {
+            width: 100%;
+            padding: 20px;
+            font-size: 18px;
+            background-color: #222;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            outline: none;
+            transition: background-color 0.3s;
+        }
+
+        .button:hover {
+            background-color: #444;
+        }
+
+        .button:active {
+            background-color: #555;
+        }
+
+        .button.operator {
+            background-color: #333;
+        }
+
+        .button.operator:hover {
+            background-color: #555;
+        }
+
+        .button.clear {
+            background-color: #900;
+        }
+
+        .button.clear:hover {
+            background-color: #b00;
+        }
+
+        .button.reset {
+            background-color: #005;
+        }
+
+        .button.reset:hover {
+            background-color: #007;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app" class="calculator">
+    <input type="text" class="display" :value="display" disabled>
+    <div class="buttons">
+        <button class="button" v-for="n in [7, 8, 9]" :key="n" @click="appendValue(n)">{{ n }}</button>
+        <button class="button operator" @click="appendValue('/')">/</button>
+
+        <button class="button" v-for="n in [4, 5, 6]" :key="n" @click="appendValue(n)">{{ n }}</button>
+        <button class="button operator" @click="appendValue('*')">*</button>
+
+        <button class="button" v-for="n in [1, 2, 3]" :key="n" @click="appendValue(n)">{{ n }}</button>
+        <button class="button operator" @click="appendValue('-')">-</button>
+
+        <button class="button" @click="appendValue(0)">0</button>
+        <button class="button" @click="appendValue('.')">.</button>
+        <button class="button clear" @click="clearDisplay">C</button>
+        <button class="button operator" @click="appendValue('+')">+</button>
+
+        <button class="button reset" style="grid-column: span 2;" @click="resetCalculator">Reset</button>
+        <button class="button clear" style="grid-column: span 2;" @click="clearLastEntry">CE</button>
+
+        <button class="button" style="grid-column: span 4;" @click="calculateResult">=</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@3"></script>
+<script>
+    const app = Vue.createApp({
+        data() {
+            return {
+                display: ''
+            };
+        },
+        methods: {
+            appendValue(value) {
+                this.display += value;
+            },
+            clearDisplay() {
+                this.display = '';
+            },
+            clearLastEntry() {
+                this.display = this.display.slice(0, -1);
+            },
+            resetCalculator() {
+                this.display = '';
+            },
+            calculateResult() {
+                try {
+                    this.display = eval(this.display);
+                } catch (e) {
+                    this.display = 'Error';
+                }
+            }
+        }
+    });
+
+    app.mount('#app');
+</script>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/service-worker.js')
+            .then(() => console.log('Service Worker Registered'))
+            .catch(err => console.error('Service Worker Registration Failed:', err));
+    }
+</script>
+
+</body>
+</html>
